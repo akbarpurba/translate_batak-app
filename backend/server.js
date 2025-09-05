@@ -43,6 +43,9 @@ app.set('views', './views');
 app.get('/', (req, res)=>{
 res.render('index');
 });
-app.listen(PORT, () => {
+/*app.listen(PORT, () => {
   console.log(`Server jalan di http://localhost:${PORT}`);
 });
+*/
+ 
+module.exports = app;
