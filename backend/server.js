@@ -16,7 +16,6 @@ app.post("/translate", (req, res) => {
   try {
     const { variant, text } = req.body;
 
-    // Validasi input
     if (!variant || !text) {
       return res.status(400).json({ success: false, error: "Field 'variant' dan 'text' wajib diisi" });
     }
@@ -38,5 +37,4 @@ app.post("/translate", (req, res) => {
   }
 });
 
-// Export untuk Vercel
 module.exports = app;
