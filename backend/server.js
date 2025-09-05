@@ -1,13 +1,16 @@
 const express = require("express");
-const cors = require('cors');
+const cors = require("cors");
 const { latinToBatak, mapping } = require("./translate");
 
 const app = express();
-const PORT = 3050;
 
 app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({extended:true}));
+
+// Route tes
+app.get("/", (req, res) => {
+  res.json({ message: "Translate API is running 🚀" });
+});
 
 app.post("/translate", (req, res) => {
   try {
@@ -15,7 +18,7 @@ app.post("/translate", (req, res) => {
 
     // Validasi input
     if (!variant || !text) {
-      return res.status(400).json({ error: "Field 'variant' dan 'text' wajib diisi" });
+      return res.status(400).json({ success: false, error: "Field 'variant' dan 'text' wajib diisi" });
     }
 
     const lowerVariant = variant.toLowerCase();
@@ -23,29 +26,17 @@ app.post("/translate", (req, res) => {
     if (!mapping[lowerVariant]) {
       return res
         .status(400)
-        .json({ error: "Varian tidak dikenal (toba, karo, simalungun)" });
+        .json({ success: false, error: "Varian tidak dikenal (toba, karo, simalungun)" });
     }
 
     const hasil = latinToBatak(text, lowerVariant);
-    return res.json({ input: text, variant: lowerVariant, output: hasil });
+    return res.json({ success: true, input: text, variant: lowerVariant, output: hasil });
 
   } catch (err) {
     console.error("Translate error:", err);
-    return res.status(500).json({ error: "Terjadi kesalahan server" });
+    return res.status(500).json({ success: false, error: "Terjadi kesalahan server" });
   }
 });
 
-
-
-app.set('view engine', 'ejs');
-app.set('views', './views');
-
-app.get('/', (req, res)=>{
-res.render('index');
-});
-/*app.listen(PORT, () => {
-  console.log(`Server jalan di http://localhost:${PORT}`);
-});
-*/
- 
+// Export untuk Vercel
 module.exports = app;
