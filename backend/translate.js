@@ -1,11 +1,14 @@
 const fs = require("fs");
+const path = require("path");
 
-// Load mapping dari JSON
-const data = JSON.parse(fs.readFileSync("data.json", "utf-8"));
+// Pastikan path ke data.json selalu benar
+const dataPath = path.join(__dirname, "data.json");
+const data = JSON.parse(fs.readFileSync(dataPath, "utf-8"));
+
 const mapping = {
   toba: data.toba,
   karo: data.karo,
-  simalungun: data.simalungun
+  simalungun: data.simalungun,
 };
 const tompi = data.tompi;
 

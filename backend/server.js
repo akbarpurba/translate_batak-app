@@ -6,8 +6,9 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Route tes
+
 app.get("/", (req, res) => {
   res.json({ message: "Translate API is running 🚀" });
 });
@@ -17,24 +18,35 @@ app.post("/translate", (req, res) => {
     const { variant, text } = req.body;
 
     if (!variant || !text) {
-      return res.status(400).json({ success: false, error: "Field 'variant' dan 'text' wajib diisi" });
+      return res.status(400).json({
+        success: false,
+        error: "Field 'variant' dan 'text' wajib diisi",
+      });
     }
 
     const lowerVariant = variant.toLowerCase();
 
     if (!mapping[lowerVariant]) {
-      return res
-        .status(400)
-        .json({ success: false, error: "Varian tidak dikenal (toba, karo, simalungun)" });
+      return res.status(400).json({
+        success: false,
+        error: "Varian tidak dikenal (toba, karo, simalungun)",
+      });
     }
 
     const hasil = latinToBatak(text, lowerVariant);
-    return res.json({ success: true, input: text, variant: lowerVariant, output: hasil });
-
+    return res.json({
+      success: true,
+      input: text,
+      variant: lowerVariant,
+      output: hasil,
+    });
   } catch (err) {
     console.error("Translate error:", err);
-    return res.status(500).json({ success: false, error: "Terjadi kesalahan server" });
+    return res
+      .status(500)
+      .json({ success: false, error: "Terjadi kesalahan server" });
   }
 });
 
+// 🔑 export Express app
 module.exports = app;
