@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Batak&display=swap" rel="stylesheet">
+
+  <meta charset="utf-8" />
+  <title>Demo Translate Aksara Batak</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 640px; margin: 32px auto; line-height: 1.5; }
+    label { display:block; margin-top:12px; font-weight:600; }
+    textarea, select, input, button { width:100%; padding:10px; margin-top:6px; }
+    #output { margin-top:16px; padding:12px; background:#f6f6f6; border-radius:8px; min-height:48px; white-space:pre-wrap; 
+  font-family: 'Noto Sans Batak', sans-serif;}
+  </style>
+</head>
+<body>
+  <h1>Translate Latin → Aksara Batak</h1>
+
+  <form id="frmTranslate">
+    <label for="variant">Varian</label>
+    <select id="variant" name="variant" required>
+      <option value="">-- Pilih varian --</option>
+      <option value="toba">Toba</option>
+      <option value="karo">Karo</option>
+      <option value="simalungun">Simalungun</option>
+    </select>
+
+    <label for="text">Teks Latin</label>
+    <textarea id="text" name="text" rows="4" placeholder="Tulis teks Latin di sini..." required></textarea>
+
+    <button id="btnSubmit" type="submit">Terjemahkan</button>
+  </form>
+
+  <div id="output" aria-live="polite"></div>
+
+  <script>
+    const form = document.getElementById('frmTranslate');
+    const btn = document.getElementById('btnSubmit');
+    const output = document.getElementById('output');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const variant = document.getElementById('variant').value.trim();
+      const text = document.getElementById('text').value;
+
+      if (!variant || !text) {
+        output.textContent = "Mohon pilih varian dan isi teks.";
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Menerjemahkan...';
+      output.textContent = '';
+
+      try {
+        const res = await fetch('/translate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ variant, text })
+        });
+
+        // Baca JSON (otomatis parse)
+        const data = await res.json();
+
+        if (!res.ok) {
+          // Server balas error JSON: { error: "..." }
+          output.textContent = data?.error || 'Terjadi kesalahan.';
+        } else {
+          output.textContent = data.output ?? '(Kosong)';
+        }
+      } catch (err) {
+        console.error(err);
+        output.textContent = 'Gagal menghubungi server.';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Terjemahkan';
+      }
+    });
+  </script>
+</body>
+</html>

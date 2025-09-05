@@ -1,0 +1,8 @@
+@import "tailwindcss";
+@import "@fontsource/noto-sans-batak";
+
+.batak-output {
+  font-family: 'Noto Sans Batak', sans-serif;
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
